@@ -1,0 +1,124 @@
+{% extends 'academico/base.html' %}
+
+{% block content %}
+
+<!-- Título -->
+<div class="container my-3">
+    <div class="row">
+        <div class="col-12 mx-auto">
+            <h1 class="text-center bg-secondary text-white py-2 shadow rounded">Lista de Equipamentos</h1>
+        </div>
+    </div>
+</div>
+
+<!-- Lista de Equipamentos Ativos -->
+<!-- Lista de Equipamentos Ativos -->
+<div class="container my-3"> 
+    <div class="row">
+        <div class="col-12 mx-auto">
+            <table class="table table-hover table-success table-striped shadow rounded">
+                <thead>
+                    <tr class="table-dark">
+                        <th>Nome</th>
+                        <th>Modelo</th>
+                        <th>Número de Série</th>
+                        <th>Status</th>
+                        <th>Categoria</th>
+                        <th>Fabricante</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for equipamento in equipamentos %}
+                        {% if not equipamento.em_manutencao %}
+                        <tr>
+                            <td>{{ equipamento.nome }}</td>
+                            <td>{{ equipamento.modelo }}</td>
+                            <td>{{ equipamento.numero_serie }}</td>
+                            <td>
+                                {% if equipamento.status == "ALUGADO" and equipamento.data_alugado %}
+                                    {{ equipamento.get_status_display }} ({{ equipamento.data_alugado|date:"d/m/Y" }})
+                                {% elif equipamento.status == "EM_MANUTENCAO" and equipamento.manutencao.data %}
+                                    {{ equipamento.get_status_display }} ({{ equipamento.manutencao.data|date:"d/m/Y" }})
+                                {% else %}
+                                    {{ equipamento.get_status_display }}
+                                {% endif %}
+                            </td>
+                            <td>{{ equipamento.categoria }}</td>
+                            <td>{{ equipamento.fabricante }}</td>
+                            <td>
+                                <a href="{% url 'editar_equipamento' equipamento.id %}" class="btn btn-info btn-sm">Editar</a>
+                                <a href="{% url 'excluir_equipamento' equipamento.id %}" class="btn btn-danger btn-sm">Excluir</a>
+                            </td>
+                        </tr>
+                        {% endif %}
+                    {% empty %}
+                        <tr><td colspan="7" class="text-center">Nenhum equipamento cadastrado.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<!-- Lista de Equipamentos em Manutenção (somente se houver algum) -->
+{% if equipamentos_em_manutencao %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12 mx-auto">
+            <h2 class="text-center bg-warning text-dark py-2 shadow rounded">Equipamentos em Manutenção</h2>
+
+            <table class="table table-hover table-striped shadow rounded">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Nome</th>
+                        <th>Modelo</th>
+                        <th>Número de Série</th>
+                        <th>Status</th>
+                        <th>Categoria</th>
+                        <th>Fabricante</th>
+                        <th>Data da Manutenção</th>
+                        <th>Descrição</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for equipamento in equipamentos_em_manutencao %}
+                    <tr>
+                        <td>{{ equipamento.nome }}</td>
+                        <td>{{ equipamento.modelo }}</td>
+                        <td>{{ equipamento.numero_serie }}</td>
+                        <td>Em Manutenção</td>
+                        <td>{{ equipamento.categoria }}</td>
+                        <td>{{ equipamento.fabricante }}</td>
+                        <td>
+                            {% if equipamento.manutencao %}
+                                {{ equipamento.manutencao.data|date:"d/m/Y" }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if equipamento.manutencao %}
+                                {{ equipamento.manutencao.descricao }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form method="post" action="{% url 'remover_manutencao' equipamento.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-warning btn-sm">Remover da Manutenção</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
