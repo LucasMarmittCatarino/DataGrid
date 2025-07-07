@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">ACADÊMICO</a>
+    <a class="navbar-brand" href="#">LOCADORA DE EQUIPAMENTOS</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -28,10 +28,30 @@
             <li><a class="dropdown-item" href="{% url 'equipamentos' %}">Lista de Equipamentos</a></li>
           </ul>
         </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Admin
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'cadastrar_admin' %}">Cadastrar Admin</a></li>
+          </ul>
+        </li>
+
         <li class="nav-item">
           <a class="nav-link" href="{% url 'contato' %}">Contato</a>
         </li>
       </ul>
+      {% if user.is_authenticated %}
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <div class="d-flex align-items-center gap-2">
+            <span class="nav-link disabled mb-0">Olá, {{ user.username }}</span>
+            <a class="btn btn-danger btn-sm" href="{% url 'logout' %}">Sair</a>
+          </div>
+        </li>
+      </ul>
+      {% endif %}
+
     </div>
   </div>
 </nav>

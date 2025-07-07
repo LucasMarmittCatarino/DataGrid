@@ -41,7 +41,7 @@
 
         {% for usuario in usuarios %}
         <tr class="table-info">
-            <td>{{ usuario.nome }}</td>
+            <td><a href="{% url 'detalhes_usuario' usuario.id %}">{{ usuario.nome }}</a></td>
             <td class="table-success">{{ usuario.equipamento }}</td>
             <td class="table-warning">{{ usuario.get_genero_display }}</td>
             <td>{{ usuario.get_escolaridade_display }}</td>

@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 from .models import Usuario, Equipamento
 from .forms import EquipamentoForm, UsuarioForm, ManutencaoForm
 from django.views.decorators.http import require_POST
@@ -6,7 +7,6 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from django.db.models import RestrictedError
 from django.utils import timezone
-
 
 ORDENACAO_USUARIOS_LOOKUP = {
     'equipamento': 'equipamento__nome',
@@ -18,11 +18,11 @@ ORDENACAO_USUARIOS_LOOKUP = {
     'telefone': 'telefone'
 }
 
-
+@login_required
 def index(request):
     return render(request, 'academico/index.html')
 
-
+@login_required
 def usuarios(request):
     query = request.GET.get('busca', '')
     if query:
@@ -36,7 +36,7 @@ def usuarios(request):
     }
     return render(request, 'academico/lista_usuarios.html', dados)
 
-
+@login_required
 def usuarios_inativos(request):
     query = request.GET.get('busca', '')
     if query:
@@ -51,7 +51,7 @@ def usuarios_inativos(request):
     }
     return render(request, 'academico/lista_usuarios.html', dados)
 
-
+@login_required
 def equipamentos(request):
     equipamentos = Equipamento.objects.filter(em_manutencao=False)
     equipamentos_em_manutencao = Equipamento.objects.filter(em_manutencao=True)
@@ -63,10 +63,10 @@ def equipamentos(request):
     return render(request, 'academico/lista_equipamentos.html', dados)
 
 
-
+@login_required
 def cadastrar_usuario(request):
     if request.method == 'POST':
-        form = UsuarioForm(request.POST)
+        form = UsuarioForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('usuarios')
@@ -79,7 +79,7 @@ def cadastrar_usuario(request):
     return render(request, 'academico/cadastrar_usuario.html', dados)
 
 
-
+@login_required
 def cadastrar_equipamento(request):
 
     if request.method == 'POST':
@@ -94,7 +94,7 @@ def cadastrar_equipamento(request):
         }
     return render(request, 'academico/cadastrar_equipamento.html', dados)
 
-
+@login_required
 def editar_usuario(request, id):
 
     try:
@@ -103,7 +103,7 @@ def editar_usuario(request, id):
         return redirect('usuarios')
 
     if request.method == 'POST':
-        form = UsuarioForm(request.POST, instance=usuario)
+        form = UsuarioForm(request.POST, request.FILES, instance=usuario)
         if form.is_valid():
             form.save()
             return redirect('usuarios')
@@ -118,9 +118,8 @@ def editar_usuario(request, id):
     return render(request, 'academico/editar_usuario.html', dados)
 
 
-from django.utils import timezone
-from django.contrib import messages
 
+@login_required
 def editar_equipamento(request, id):
     try:
         equipamento = Equipamento.objects.get(id=id)
@@ -182,7 +181,7 @@ def editar_equipamento(request, id):
     return render(request, 'academico/editar_equipamento.html', dados)
 
 
-
+@login_required
 def excluir_equipamento(request, id):
     try:
         equipamento = Equipamento.objects.get(id=id)
@@ -202,7 +201,7 @@ def excluir_equipamento(request, id):
     return redirect('equipamentos')
 
 
-
+@login_required
 def excluir_usuario(request, id):
     try:
         usuario = Usuario.objects.get(id=id)
@@ -232,7 +231,7 @@ def ativar_usuario(request, id):
 
     return redirect('usuarios_inativos')
 
-
+@login_required
 def ordenar_usuarios(request, campo):
     campo_ordenacao = ORDENACAO_USUARIOS_LOOKUP.get(campo)
     busca = request.GET.get('busca', '')
@@ -249,7 +248,7 @@ def ordenar_usuarios(request, campo):
     }
     return render(request, 'academico/lista_usuarios.html', dados)
 
-
+@login_required
 def ordenar_usuarios_inativos(request, campo):
     campo_ordenacao = ORDENACAO_USUARIOS_LOOKUP.get(campo)
     busca = request.GET.get('busca', '')
@@ -267,6 +266,7 @@ def ordenar_usuarios_inativos(request, campo):
     return render(request, 'academico/lista_usuarios.html', dados)
 
 @require_POST
+@login_required
 def remover_manutencao(request, id):
     try:
         equipamento = Equipamento.objects.get(id=id)
@@ -278,3 +278,18 @@ def remover_manutencao(request, id):
     except Equipamento.DoesNotExist:
         messages.error(request, "Equipamento não encontrado.")
     return redirect('equipamentos')
+
+@login_required
+def detalhes_usuario(request, usuario_id):
+    try:
+        usuario = Usuario.objects.get(id=usuario_id)
+    except Usuario.DoesNotExist:
+        messages.error(request, "Usuario não encontrado.")
+        return redirect('usuarios')
+    
+    dados = {
+        'usuario': usuario,
+    }
+
+    return render(request, 'academico/detalhes_usuario.html', dados)
+

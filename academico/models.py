@@ -1,4 +1,5 @@
 from django.db import models
+from stdimage.models import StdImageField
 
 GENERO_CHOICES = [
     ('M', 'Masculino'),
@@ -60,6 +61,12 @@ class Equipamento(models.Model):
 
 class Usuario(models.Model):
     nome = models.CharField(max_length=100)
+    foto = StdImageField(
+        upload_to='fotos/equipamentos',
+        variations={'thumb': (150, 150), 'medium': (300, 300)},
+        blank=True,
+        null=True
+    )
     data_nascimento = models.DateField()
     cpf = models.CharField(max_length=14, unique=True)
     genero = models.CharField(max_length=2, choices=GENERO_CHOICES)
