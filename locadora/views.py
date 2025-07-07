@@ -30,7 +30,7 @@ def usuarios(request):
         'ativos': True,
         'query': query,
     }
-    return render(request, 'locadora/lista_usuarios.html', dados)
+    return render(request, 'locadora/lista_clientes.html', dados)
 
 @login_required
 def usuarios_inativos(request):
@@ -45,7 +45,7 @@ def usuarios_inativos(request):
         'ativos': False,
         'query': query
     }
-    return render(request, 'locadora/lista_usuarios.html', dados)
+    return render(request, 'locadora/lista_clientes.html', dados)
 
 @login_required
 def equipamentos(request):
@@ -60,7 +60,7 @@ def equipamentos(request):
 
 
 @login_required
-def cadastrar_usuario(request):
+def cadastrar_cliente(request):
     if request.method == 'POST':
         form = UsuarioForm(request.POST, request.FILES)
         if form.is_valid():
@@ -72,7 +72,7 @@ def cadastrar_usuario(request):
     dados = {
         'form': form,
     }
-    return render(request, 'locadora/cadastrar_usuario.html', dados)
+    return render(request, 'locadora/cadastrar_cliente.html', dados)
 
 
 @login_required
@@ -91,7 +91,7 @@ def cadastrar_equipamento(request):
     return render(request, 'locadora/cadastrar_equipamento.html', dados)
 
 @login_required
-def editar_usuario(request, id):
+def editar_cliente(request, id):
 
     try:
         usuario = Usuario.objects.get(id=id)
@@ -111,7 +111,7 @@ def editar_usuario(request, id):
         'usuario': usuario,
     }
 
-    return render(request, 'locadora/editar_usuario.html', dados)
+    return render(request, 'locadora/editar_cliente.html', dados)
 
 
 
@@ -242,7 +242,7 @@ def ordenar_usuarios(request, campo):
         'ativos': True,
         'query': busca,
     }
-    return render(request, 'locadora/lista_usuarios.html', dados)
+    return render(request, 'locadora/lista_clientes.html', dados)
 
 @login_required
 def ordenar_usuarios_inativos(request, campo):
@@ -259,7 +259,7 @@ def ordenar_usuarios_inativos(request, campo):
         'ativos': False,
         'query': busca,
     }
-    return render(request, 'locadora/lista_usuarios.html', dados)
+    return render(request, 'locadora/lista_clientes.html', dados)
 
 @require_POST
 @login_required
@@ -276,7 +276,7 @@ def remover_manutencao(request, id):
     return redirect('equipamentos')
 
 @login_required
-def detalhes_usuario(request, usuario_id):
+def detalhes_cliente(request, usuario_id):
     try:
         usuario = Usuario.objects.get(id=usuario_id)
     except Usuario.DoesNotExist:
@@ -287,5 +287,5 @@ def detalhes_usuario(request, usuario_id):
         'usuario': usuario,
     }
 
-    return render(request, 'locadora/detalhes_usuario.html', dados)
+    return render(request, 'locadora/detalhes_cliente.html', dados)
 
