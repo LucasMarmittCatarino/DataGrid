@@ -1,0 +1,52 @@
+{% extends 'locadora/base.html' %}
+
+{% block content %}
+<div class="container my-3">
+    <div class="row">
+        <div class="col-8 mx-auto">
+            <h1 class="bg-secondary shadow rounded py-2 text-center text-white">Edição de Equipamento</h1>
+        </div>
+    </div>
+</div>
+
+<div class="container my-3">
+    <div class="row">
+        <div class="col-8 mx-auto">
+            <form method="post" id="formEquipamento">
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <div id="manutencaoCampos" style="display: none;">
+                    <h4>Informações de Manutenção</h4>
+                    {{ manutencao_form.as_p }}
+                </div>
+
+                <button type="submit" class="btn btn-success">Salvar Alterações</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Função para mostrar/esconder os campos de manutenção
+    function toggleManutencaoCampos() {
+        const checkbox = document.getElementById('id_em_manutencao');
+        const manutencaoDiv = document.getElementById('manutencaoCampos');
+        if (checkbox.checked) {
+            manutencaoDiv.style.display = 'block';
+        } else {
+            manutencaoDiv.style.display = 'none';
+        }
+    }
+
+    // Adiciona o evento quando a página carrega
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkbox = document.getElementById('id_em_manutencao');
+        toggleManutencaoCampos(); // chama para ajustar na carga inicial
+
+        checkbox.addEventListener('change', toggleManutencaoCampos);
+    });
+</script>
+
+{% endblock %}

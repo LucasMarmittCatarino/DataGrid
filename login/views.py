@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
-from .forms import UsuarioCreateForm
+from .forms import AdminCreateForm
 
 def login_view(request):
     if request.method == 'POST':
@@ -31,17 +31,17 @@ def logout_view(request):
 @login_required
 def cadastrar_admin(request):
     if request.method == 'POST':
-        form = UsuarioCreateForm(request.POST)
+        form = AdminCreateForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, 'Usuário criado com sucesso!')
             return redirect('login')
     else:
-        form = UsuarioCreateForm()
+        form = AdminCreateForm()
     
     dados = {
         'form': form
      }
-    return render(request, 'login/cadastro_usuario.html', dados)
+    return render(request, 'login/cadastro_admin.html', dados)
 
 
