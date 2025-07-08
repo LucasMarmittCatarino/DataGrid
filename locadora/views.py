@@ -52,33 +52,27 @@ def usuarios_inativos(request):
 def equipamentos(request):
     query = request.GET.get('busca', '')
 
+    equipamentos = Equipamento.objects.filter(
+        status='DISPONIVEL',
+        em_manutencao=False
+    )
+
     if query:
-        equipamentos = Equipamento.objects.filter(
-            em_manutencao=False
-        ).filter(
+        equipamentos = equipamentos.filter(
             models.Q(nome__icontains=query) |
             models.Q(modelo__icontains=query) |
             models.Q(numero_serie__icontains=query) |
             models.Q(categoria__icontains=query) |
             models.Q(fabricante__icontains=query)
         )
-        equipamentos_em_manutencao = Equipamento.objects.filter(em_manutencao=True).filter(
-            models.Q(nome__icontains=query) |
-            models.Q(modelo__icontains=query) |
-            models.Q(numero_serie__icontains=query) |
-            models.Q(categoria__icontains=query) |
-            models.Q(fabricante__icontains=query)
-        )
-    else:
-        equipamentos = Equipamento.objects.filter(em_manutencao=False)
-        equipamentos_em_manutencao = Equipamento.objects.filter(em_manutencao=True)
 
     dados = {
         'equipamentos': equipamentos,
-        'equipamentos_em_manutencao': equipamentos_em_manutencao,
         'query': query,
     }
+
     return render(request, 'locadora/lista_equipamentos.html', dados)
+
 
 
 @login_required
@@ -310,4 +304,47 @@ def detalhes_cliente(request, usuario_id):
     }
 
     return render(request, 'locadora/detalhes_cliente.html', dados)
+
+@login_required
+def equipamentos_alugados(request):
+    query = request.GET.get('busca', '')
+    equipamentos = Equipamento.objects.filter(status='ALUGADO')
+
+    if query:
+        equipamentos = equipamentos.filter(
+            models.Q(nome__icontains=query) |
+            models.Q(modelo__icontains=query) |
+            models.Q(numero_serie__icontains=query) |
+            models.Q(categoria__icontains=query) |
+            models.Q(fabricante__icontains=query)
+        )
+
+    dados = {
+        'equipamentos': equipamentos,
+        'query': query,
+    }
+    return render(request, 'locadora/lista_equipamentos_alugados.html', dados)
+
+def equipamentos_indisponiveis(request):
+    query = request.GET.get('busca', '')
+
+    equipamentos = Equipamento.objects.filter(
+        models.Q(status='INDISPONIVEL') | models.Q(em_manutencao=True)
+    )
+
+    if query:
+        equipamentos = equipamentos.filter(
+            models.Q(nome__icontains=query) |
+            models.Q(modelo__icontains=query) |
+            models.Q(numero_serie__icontains=query) |
+            models.Q(categoria__icontains=query) |
+            models.Q(fabricante__icontains=query)
+        )
+
+    dados = {
+        'equipamentos': equipamentos,
+        'query': query,
+    }
+
+    return render(request, 'locadora/lista_equipamentos_indisponiveis.html', dados)
 

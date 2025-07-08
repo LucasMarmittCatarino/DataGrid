@@ -1,49 +1,49 @@
 {% extends 'locadora/base.html' %}
 {% block content %}
 
-<!-- Cont. de H1-->
+<!-- Título -->
 <div class="container my-3"> 
     {% if ativos %}
-        <h1 class="text-center bg-secondary text-white py-2 shadow rounded">Lista de Clientes</h1>
+        <h1 class="text-center bg-primary text-white py-2 shadow rounded">Lista de Clientes</h1>
     {% else %}
-        <h1 class="text-center bg-secondary text-white py-2 shadow rounded">Lista de Clientes Inativos</h1>
+        <h1 class="text-center bg-primary text-white py-2 shadow rounded">Lista de Clientes Inativos</h1>
     {% endif %}
 </div> 
 
 {% include 'locadora/partials/_busca.html' %}
 
-<!-- Cont. de Table-->
+<!-- Tabela -->
 <div class="container"> 
-    <table class="table table-striped table-hover rounded shadow">
-        <tr class="table-dark">
+    <table class="table table-striped table-hover table-primary shadow rounded">
+        <tr class="bg-primary text-white">
             {% if ativos %}
-                <th><a class="text-white" href="{% url 'ordenar_usuarios' 'nome' %}?busca={{ query }}">Nome</a></th>
-                <th><a class="text-white" href="{% url 'ordenar_usuarios' 'equipamento' %}?busca={{ query }}">Equipamento</a></th>
-                <th><a class="text-white" href="{% url 'ordenar_usuarios' 'genero' %}?busca={{ query }}">Gênero</a></th>
-                <th><a class="text-white" href="{% url 'ordenar_usuarios' 'escolaridade' %}?busca={{ query }}">Escolaridade</a></th>
-                <th><a class="text-white" href="{% url 'ordenar_usuarios' 'estado_civil' %}?busca={{ query }}">Estado Civil</a></th>
-                <th><a class="text-white" href="{% url 'ordenar_usuarios' 'data_nascimento' %}?busca={{ query }}">Nascimento</a></th>
-                <th><a class="text-white" href="{% url 'ordenar_usuarios' 'telefone' %}?busca={{ query }}">Telefone</a></th>
-                <th>Endereço</th>
-                <th>Ações</th>
+                <th><a href="{% url 'ordenar_usuarios' 'nome' %}?busca={{ query }}">Nome</a></th>
+                <th><a href="{% url 'ordenar_usuarios' 'equipamento' %}?busca={{ query }}">Equipamento</a></th>
+                <th><a href="{% url 'ordenar_usuarios' 'genero' %}?busca={{ query }}">Gênero</a></th>
+                <th><a href="{% url 'ordenar_usuarios' 'escolaridade' %}?busca={{ query }}">Escolaridade</a></th>
+                <th><a href="{% url 'ordenar_usuarios' 'estado_civil' %}?busca={{ query }}">Estado Civil</a></th>
+                <th><a href="{% url 'ordenar_usuarios' 'data_nascimento' %}?busca={{ query }}">Nascimento</a></th>
+                <th><a href="{% url 'ordenar_usuarios' 'telefone' %}?busca={{ query }}">Telefone</a></th>
+                <th><a href="#">Endereço</a></th>
+                <th><a href="#">Ações</a></th>
             {% else %}
-                <th><a class="text-white" href="{% url 'ordenar_usuarios_inativos' 'nome' %}?busca={{ query }}">Nome</a></th>
-                <th><a class="text-white" href="{% url 'ordenar_usuarios_inativos' 'equipamento' %}?busca={{ query }}">Equipamento</a></th>
-                <th><a class="text-white" href="{% url 'ordenar_usuarios_inativos' 'genero' %}?busca={{ query }}">Gênero</a></th>
-                <th><a class="text-white" href="{% url 'ordenar_usuarios_inativos' 'escolaridade' %}?busca={{ query }}">Escolaridade</a></th>
-                <th><a class="text-white" href="{% url 'ordenar_usuarios_inativos' 'estado_civil' %}?busca={{ query }}">Estado Civil</a></th>
-                <th><a class="text-white" href="{% url 'ordenar_usuarios_inativos' 'data_nascimento' %}?busca={{ query }}">Nascimento</a></th>
-                <th><a class="text-white" href="{% url 'ordenar_usuarios_inativos' 'telefone' %}?busca={{ query }}">Telefone</a></th>
-                <th>Endereço</th>
-                <th>Ativar</th>
+                <th><a href="{% url 'ordenar_usuarios_inativos' 'nome' %}?busca={{ query }}">Nome</a></th>
+                <th><a href="{% url 'ordenar_usuarios_inativos' 'equipamento' %}?busca={{ query }}">Equipamento</a></th>
+                <th><a href="{% url 'ordenar_usuarios_inativos' 'genero' %}?busca={{ query }}">Gênero</a></th>
+                <th><a href="{% url 'ordenar_usuarios_inativos' 'escolaridade' %}?busca={{ query }}">Escolaridade</a></th>
+                <th><a href="{% url 'ordenar_usuarios_inativos' 'estado_civil' %}?busca={{ query }}">Estado Civil</a></th>
+                <th><a href="{% url 'ordenar_usuarios_inativos' 'data_nascimento' %}?busca={{ query }}">Nascimento</a></th>
+                <th><a href="{% url 'ordenar_usuarios_inativos' 'telefone' %}?busca={{ query }}">Telefone</a></th>
+                <th><a href="#">Endereço</a></th>
+                <th><a href="#">Ações</a></th>
             {% endif %}
         </tr>
 
         {% for usuario in usuarios %}
-        <tr class="table-info">
+        <tr>
             <td><a href="{% url 'detalhes_cliente' usuario.id %}">{{ usuario.nome }}</a></td>
-            <td class="table-success">{{ usuario.equipamento }}</td>
-            <td class="table-warning">{{ usuario.get_genero_display }}</td>
+            <td>{{ usuario.equipamento }}</td>
+            <td>{{ usuario.get_genero_display }}</td>
             <td>{{ usuario.get_escolaridade_display }}</td>
             <td>{{ usuario.get_estado_civil_display }}</td>
             <td>{{ usuario.data_nascimento|date:"d/m/Y" }}</td>
@@ -55,7 +55,7 @@
             </td>
             <td>
                 {% if ativos %}
-                    <a href="{% url 'editar_cliente' usuario.id %}" class="btn btn-info btn-sm">Editar</a>
+                    <a href="{% url 'editar_cliente' usuario.id %}" class="btn btn-primary btn-sm text-white">Editar</a>
                     <a href="{% url 'excluir_usuario' usuario.id %}" class="btn btn-danger btn-sm">Excluir</a>
                 {% else %}
                     <a href="{% url 'ativar_usuario' usuario.id %}" class="btn btn-success btn-sm">Ativar</a>
@@ -69,6 +69,5 @@
         {% endfor %}
     </table>
 </div>
-<!-- Cont. de Table--> 
 
 {% endblock %}

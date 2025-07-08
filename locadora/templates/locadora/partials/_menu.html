@@ -11,9 +11,8 @@
             Cliente
           </a>
           <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'usuarios' %}">Lista de Clientes</a></li>
             <li><a class="dropdown-item" href="{% url 'cadastrar_cliente' %}">Cadastrar Cliente</a></li>
-            <li><a class="dropdown-item" href="{% url 'usuarios' %}">Clientes Ativos</a></li>
-            <li><a class="dropdown-item" href="{% url 'usuarios' %}">Clientes Inativos</a></li>
           </ul>
         </li>
         <li class="nav-item dropdown">
@@ -21,8 +20,8 @@
             Equipamento
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="{% url 'cadastrar_equipamento' %}">Cadastrar Equipamento</a></li>
             <li><a class="dropdown-item" href="{% url 'equipamentos' %}">Lista de Equipamentos</a></li>
+            <li><a class="dropdown-item" href="{% url 'cadastrar_equipamento' %}">Cadastrar Equipamento</a></li>
           </ul>
         </li>
         <li class="nav-item dropdown">
@@ -32,10 +31,6 @@
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="{% url 'cadastrar_admin' %}">Cadastrar Admin</a></li>
           </ul>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'contato' %}">Contato</a>
         </li>
       </ul>
       {% if user.is_authenticated %}

@@ -6,29 +6,40 @@
 <div class="container my-3">
     <div class="row">
         <div class="col-12 mx-auto">
-            <h1 class="text-center bg-secondary text-white py-2 shadow rounded">Lista de Equipamentos</h1>
+            <h1 class="text-center bg-success text-white py-2 shadow rounded">Equipamentos Disponíveis</h1>
         </div>
     </div>
 </div>
 
+<!-- Navegação -->
+<div class="container my-3">
+    <div class="btn-group">
+        <a href="{% url 'equipamentos' %}" class="btn btn-outline-success active">Disponíveis</a>
+        <a href="{% url 'equipamentos_indisponiveis' %}" class="btn btn-outline-success">Indisponíveis</a>
+        <a href="{% url 'equipamentos_alugados' %}" class="btn btn-outline-success">Alugados</a>
+    </div>
+</div>
+
+<!-- Barra de busca -->
 <div class="container my-3">
     <form method="GET" class="form-inline">
         <div class="input-group">
             <input type="text" name="busca" class="form-control" placeholder="Buscar por nome, modelo, marca..."
                    value="{{ query }}">
             <div class="input-group-append">
-                <button class="btn btn-primary" type="submit">Buscar</button>
+                <button class="btn btn-success" type="submit">Buscar</button>
             </div>
         </div>
     </form>
 </div>
+
 <!-- Lista de Equipamentos Ativos -->
 <div class="container my-3"> 
     <div class="row">
         <div class="col-12 mx-auto">
             <table class="table table-hover table-success table-striped shadow rounded">
                 <thead>
-                    <tr class="table-dark">
+                    <tr class="bg-success text-white">
                         <th>Imagem</th>
                         <th>Nome</th>
                         <th>Modelo</th>
@@ -65,78 +76,18 @@
                             <td>{{ equipamento.categoria }}</td>
                             <td>{{ equipamento.fabricante }}</td>
                             <td>
-                                <a href="{% url 'editar_equipamento' equipamento.id %}" class="btn btn-info btn-sm">Editar</a>
+                                <a href="{% url 'editar_equipamento' equipamento.id %}" class="btn btn-outline-success btn-sm">Editar</a>
                                 <a href="{% url 'excluir_equipamento' equipamento.id %}" class="btn btn-danger btn-sm">Excluir</a>
                             </td>
                         </tr>
                         {% endif %}
                     {% empty %}
-                        <tr><td colspan="7" class="text-center">Nenhum equipamento cadastrado.</td></tr>
+                        <tr><td colspan="8" class="text-center">Nenhum equipamento cadastrado.</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
 </div>
-
-
-<!-- Lista de Equipamentos em Manutenção (somente se houver algum) -->
-{% if equipamentos_em_manutencao %}
-<div class="container my-5">
-    <div class="row">
-        <div class="col-12 mx-auto">
-            <h2 class="text-center bg-warning text-dark py-2 shadow rounded">Equipamentos em Manutenção</h2>
-
-            <table class="table table-hover table-striped shadow rounded">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Nome</th>
-                        <th>Modelo</th>
-                        <th>Número de Série</th>
-                        <th>Status</th>
-                        <th>Categoria</th>
-                        <th>Fabricante</th>
-                        <th>Data da Manutenção</th>
-                        <th>Descrição</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for equipamento in equipamentos_em_manutencao %}
-                    <tr>
-                        <td>{{ equipamento.nome }}</td>
-                        <td>{{ equipamento.modelo }}</td>
-                        <td>{{ equipamento.numero_serie }}</td>
-                        <td>Em Manutenção</td>
-                        <td>{{ equipamento.categoria }}</td>
-                        <td>{{ equipamento.fabricante }}</td>
-                        <td>
-                            {% if equipamento.manutencao %}
-                                {{ equipamento.manutencao.data|date:"d/m/Y" }}
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if equipamento.manutencao %}
-                                {{ equipamento.manutencao.descricao }}
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
-                        <td>
-                            <form method="post" action="{% url 'remover_manutencao' equipamento.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-warning btn-sm">Remover da Manutenção</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-{% endif %}
 
 {% endblock %}

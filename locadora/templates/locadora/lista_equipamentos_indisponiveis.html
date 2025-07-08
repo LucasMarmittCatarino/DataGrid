@@ -1,0 +1,96 @@
+{% extends 'locadora/base.html' %}
+
+{% block content %}
+<div class="container my-3">
+    <div class="row">
+        <div class="col-12 mx-auto">
+            <h1 class="text-center bg-danger text-white py-2 shadow rounded">Equipamentos Indisponíveis</h1>
+        </div>
+    </div>
+</div>
+
+<!-- Navegação -->
+<div class="container my-3">
+    <div class="btn-group">
+        <a href="{% url 'equipamentos' %}" class="btn btn-outline-danger">Disponíveis</a>
+        <a href="{% url 'equipamentos_indisponiveis' %}" class="btn btn-outline-danger active">Indisponíveis</a>
+        <a href="{% url 'equipamentos_alugados' %}" class="btn btn-outline-danger">Alugados</a>
+    </div>
+</div>
+
+<!-- Barra de busca -->
+<div class="container my-3">
+    <form method="GET" class="form-inline">
+        <div class="input-group">
+            <input type="text" name="busca" class="form-control" placeholder="Buscar por nome, modelo, marca..."
+                   value="{{ query }}">
+            <div class="input-group-append">
+                <button class="btn btn-danger" type="submit">Buscar</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Tabela -->
+<div class="container my-3"> 
+    <div class="row">
+        <div class="col-12 mx-auto">
+            <table class="table table-hover table-striped table-danger shadow rounded">
+                <thead class="table-danger">
+                    <tr>
+                        <th>Imagem</th>
+                        <th>Nome</th>
+                        <th>Modelo</th>
+                        <th>Número de Série</th>
+                        <th>Status</th>
+                        <th>Categoria</th>
+                        <th>Fabricante</th>
+                        <th>Data da Manutenção</th>
+                        <th>Descrição</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for equipamento in equipamentos %}
+                    <tr>
+                        <td>
+                            {% if equipamento.foto %}
+                                <img src="{{ equipamento.foto.url }}" alt="{{ equipamento.nome }}" width="80" height="80" class="img-thumbnail">
+                            {% else %}
+                                <span class="text-muted">Sem foto</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ equipamento.nome }}</td>
+                        <td>{{ equipamento.modelo }}</td>
+                        <td>{{ equipamento.numero_serie }}</td>
+                        <td>{{ equipamento.get_status_display }}</td>
+                        <td>{{ equipamento.categoria }}</td>
+                        <td>{{ equipamento.fabricante }}</td>
+                        <td>
+                            {% if equipamento.manutencao %}
+                                {{ equipamento.manutencao.data|date:"d/m/Y" }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if equipamento.manutencao %}
+                                {{ equipamento.manutencao.descricao }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'editar_equipamento' equipamento.id %}" class="btn btn-outline-danger btn-sm">Editar</a>
+                            <a href="{% url 'excluir_equipamento' equipamento.id %}" class="btn btn-danger btn-sm">Excluir</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                        <tr><td colspan="10" class="text-center">Nenhum equipamento indisponível encontrado.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
