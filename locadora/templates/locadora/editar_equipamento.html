@@ -12,11 +12,53 @@
 <div class="container my-3">
     <div class="row">
         <div class="col-8 mx-auto">
-            <form method="post" id="formEquipamento" enctype="multipart/form-data">
+            <form method="post" enctype="multipart/form-data" id="formEquipamento">
                 {% csrf_token %}
 
-                {{ form.as_p }}
+                <!-- Imagem atual (preview) -->
+                {% if equipamento.foto %}
+                    <div class="mb-3 text-center">
+                        <label class="form-label"><strong>Imagem atual:</strong></label><br>
+                        <img id="previewImage" src="{{ equipamento.foto.url }}" class="img-thumbnail" style="max-width: 200px;">
+                    </div>
+                {% else %}
+                    <div class="mb-3 text-center">
+                        <img id="previewImage" class="img-thumbnail" style="display: none; max-width: 200px;">
+                    </div>
+                {% endif %}
 
+                <!-- Novo input de imagem -->
+                <div class="mb-3">
+                    <label for="id_foto" class="form-label"><strong>Selecionar nova imagem:</strong></label>
+                    {{ form.foto }}
+                </div>
+
+                <!-- Campos manuais com ordem definida -->
+                <div class="mb-3">
+                    {{ form.nome.label_tag }} {{ form.nome }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.modelo.label_tag }} {{ form.modelo }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.numero_serie.label_tag }} {{ form.numero_serie }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.categoria.label_tag }} {{ form.categoria }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.fabricante.label_tag }} {{ form.fabricante }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.em_manutencao.label_tag }} {{ form.em_manutencao }}
+                </div>
+
+                <!-- Campos de manutenção -->
                 <div id="manutencaoCampos" style="display: none;">
                     <h4>Informações de Manutenção</h4>
                     {{ manutencao_form.as_p }}
@@ -28,21 +70,33 @@
     </div>
 </div>
 
+<!-- JavaScript: alternar campos de manutenção e preview da imagem -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const checkbox = document.getElementById('id_em_manutencao');
         const manutencaoDiv = document.getElementById('manutencaoCampos');
+        const inputFoto = document.getElementById('id_foto');
+        const preview = document.getElementById('previewImage');
 
-        function toggle() {
-            manutencaoDiv.style.display = checkbox.checked ? 'block' : 'none';
-        }
-
+        // Mostrar/esconder manutenção
         if (checkbox) {
+            const toggle = () => manutencaoDiv.style.display = checkbox.checked ? 'block' : 'none';
             toggle();
             checkbox.addEventListener('change', toggle);
         }
+
+        // Preview da nova imagem escolhida
+        inputFoto.addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
     });
 </script>
-
-
 {% endblock %}

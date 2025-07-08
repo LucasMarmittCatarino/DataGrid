@@ -7,7 +7,6 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from django.utils import timezone
 from django.db import models
-from django.shortcuts import get_object_or_404
 
 ORDENACAO_USUARIOS_LOOKUP = {
     'equipamento': 'equipamento__nome',
