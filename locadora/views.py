@@ -80,7 +80,12 @@ def cadastrar_cliente(request):
     if request.method == 'POST':
         form = UsuarioForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            cliente = form.save()
+            if cliente.equipamento:
+                cliente.equipamento.status = 'ALUGADO'
+                if not cliente.equipamento.data_alugado:
+                    cliente.equipamento.data_alugado = timezone.now().date()
+                cliente.equipamento.save()
             return redirect('usuarios')
     else:
         form = UsuarioForm()
@@ -117,8 +122,16 @@ def editar_cliente(request, id):
     if request.method == 'POST':
         form = UsuarioForm(request.POST, request.FILES, instance=usuario)
         if form.is_valid():
-            form.save()
+            cliente = form.save()
+
+            if cliente.equipamento:
+                cliente.equipamento.status = 'ALUGADO'
+                if not cliente.equipamento.data_alugado:
+                    cliente.equipamento.data_alugado = timezone.now().date()
+                cliente.equipamento.save()
+
             return redirect('usuarios')
+
 
     form = UsuarioForm(instance=usuario)
 
@@ -325,6 +338,7 @@ def equipamentos_alugados(request):
     }
     return render(request, 'locadora/lista_equipamentos_alugados.html', dados)
 
+@login_required
 def equipamentos_indisponiveis(request):
     query = request.GET.get('busca', '')
 
@@ -347,4 +361,21 @@ def equipamentos_indisponiveis(request):
     }
 
     return render(request, 'locadora/lista_equipamentos_indisponiveis.html', dados)
+
+@login_required
+def relatorio_equipamento(request, id):
+    try:
+        equipamento = Equipamento.objects.get(id=id, status='ALUGADO')
+    except Equipamento.DoesNotExist:
+        messages.error(request, "Equipamento não encontrado ou não está alugado.")
+        return redirect('equipamentos_alugados')
+
+    cliente = Usuario.objects.filter(equipamento=equipamento, ativo=True).first()
+
+    dados = {
+        'equipamento': equipamento,
+        'cliente': cliente,
+    }
+
+    return render(request, 'locadora/relatorio_equipamento.html', dados)
 
