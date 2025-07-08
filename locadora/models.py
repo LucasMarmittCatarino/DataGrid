@@ -34,7 +34,11 @@ class Equipamento(models.Model):
     nome = models.CharField(max_length=100)
     modelo = models.CharField(max_length=100, blank=True, null=True)
     numero_serie = models.CharField(max_length=100, blank=True, null=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='DISPONIVEL')
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='DISPONIVEL'
+    )
     categoria = models.CharField(max_length=100, blank=True, null=True)
     fabricante = models.CharField(max_length=100, blank=True, null=True)
     em_manutencao = models.BooleanField(default=False)
@@ -52,6 +56,14 @@ class Equipamento(models.Model):
     def save(self, *args, **kwargs):
         if self.nome:
             self.nome = self.formatar_nome_equipamento(self.nome)
+
+        if self.em_manutencao:
+            self.status = 'EM_MANUTENCAO'
+        elif self.usuario_set.exists():
+            self.status = 'ALUGADO'
+        else:
+            self.status = 'DISPONIVEL'
+
         super().save(*args, **kwargs)
 
     def formatar_nome_equipamento(self, nome):

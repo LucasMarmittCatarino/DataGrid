@@ -1,12 +1,17 @@
 from django import forms
 from .models import Equipamento, Usuario, Manutencao
 from django.db import models
+from django.utils import timezone
 
-
-class EquipamentoForm(forms.ModelForm):
+class EquipamentoCreateForm(forms.ModelForm):
     class Meta:
         model = Equipamento
-        fields = [ 'nome', 'modelo', 'numero_serie', 'status', 'categoria', 'fabricante', 'em_manutencao', 'data_alugado', 'foto']
+        fields = ['nome', 'modelo', 'numero_serie', 'categoria', 'fabricante', 'foto']
+
+class EquipamentoUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Equipamento
+        fields = ['foto', 'nome', 'modelo', 'numero_serie', 'categoria', 'fabricante', 'em_manutencao']
 
 
 class UsuarioForm(forms.ModelForm):
@@ -40,8 +45,13 @@ class UsuarioForm(forms.ModelForm):
 class ManutencaoForm(forms.ModelForm):
     class Meta:
         model = Manutencao
-        fields = ['data', 'descricao']
-        widgets = {
-            'data': forms.DateInput(attrs={'type': 'date'})
-        }
+        fields = ['descricao']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        descricao = cleaned_data.get('descricao')
+
+        if not descricao:
+            raise forms.ValidationError("A descrição da manutenção é obrigatória.")
+        return cleaned_data
 

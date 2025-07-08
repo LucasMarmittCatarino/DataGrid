@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Usuario, Equipamento
-from .forms import EquipamentoForm, UsuarioForm, ManutencaoForm
+from .forms import EquipamentoUpdateForm, UsuarioForm, ManutencaoForm, EquipamentoCreateForm
 from django.views.decorators.http import require_POST
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.utils import timezone
 from django.db import models
+from django.shortcuts import get_object_or_404
 
 ORDENACAO_USUARIOS_LOOKUP = {
     'equipamento': 'equipamento__nome',
@@ -97,18 +98,17 @@ def cadastrar_cliente(request):
 
 @login_required
 def cadastrar_equipamento(request):
-
     if request.method == 'POST':
-        form = EquipamentoForm(request.POST, request.FILES)
+        form = EquipamentoCreateForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            equipamento = form.save(commit=False)
+            equipamento.status = 'DISPONIVEL'
+            equipamento.save()
             return redirect('equipamentos')
     else:
-        form = EquipamentoForm()
-        dados = {
-            'form': form,
-        }
-    return render(request, 'locadora/cadastrar_equipamento.html', dados)
+        form = EquipamentoCreateForm()
+
+    return render(request, 'locadora/cadastrar_equipamento.html', {'form': form})
 
 @login_required
 def editar_cliente(request, id):
@@ -142,7 +142,6 @@ def editar_cliente(request, id):
     return render(request, 'locadora/editar_cliente.html', dados)
 
 
-
 @login_required
 def editar_equipamento(request, id):
     try:
@@ -151,40 +150,24 @@ def editar_equipamento(request, id):
         return redirect('equipamentos')
 
     if request.method == 'POST':
-        form = EquipamentoForm(request.POST, request.FILES, instance=equipamento)
-        manutencao_form = ManutencaoForm(
-            request.POST,
-            instance=equipamento.manutencao if hasattr(equipamento, 'manutencao') else None
-        )
+        form = EquipamentoUpdateForm(request.POST, request.FILES, instance=equipamento)
+        manutencao_form = ManutencaoForm(request.POST, instance=equipamento.manutencao if hasattr(equipamento, 'manutencao') else None)
 
-        if form.is_valid():
-            em_manutencao = form.cleaned_data['em_manutencao']
-            status = form.cleaned_data['status']
-
-            if em_manutencao and status == 'ALUGADO':
-                messages.error(request, "O equipamento não pode ser alugado enquanto estiver em manutenção.")
-                dados = {
-                    'form': form,
-                    'manutencao_form': manutencao_form,
-                    'equipamento': equipamento,
-                }
-                return render(request, 'locadora/editar_equipamento.html', dados)
-
+        if form.is_valid() and (not form.cleaned_data['em_manutencao'] or manutencao_form.is_valid()):
             equipamento = form.save(commit=False)
+            equipamento.status = 'INDISPONIVEL' if form.cleaned_data['em_manutencao'] else 'DISPONIVEL'
 
-            if status == 'ALUGADO' and not equipamento.data_alugado:
-                equipamento.data_alugado = timezone.now().date()
-            elif status != 'ALUGADO':
+            if equipamento.status == 'DISPONIVEL':
                 equipamento.data_alugado = None
-
 
             equipamento.save()
 
-            if em_manutencao:
-                if manutencao_form.is_valid():
-                    manut = manutencao_form.save(commit=False)
-                    manut.equipamento = equipamento
-                    manut.save()
+            if form.cleaned_data['em_manutencao']:
+                manut = manutencao_form.save(commit=False)
+                manut.equipamento = equipamento
+                if not manut.data:
+                    manut.data = timezone.now().date()
+                manut.save()
             else:
                 if hasattr(equipamento, 'manutencao'):
                     equipamento.manutencao.delete()
@@ -192,17 +175,15 @@ def editar_equipamento(request, id):
             return redirect('equipamentos')
 
     else:
-        form = EquipamentoForm(instance=equipamento)
-        manutencao_form = ManutencaoForm(
-            instance=equipamento.manutencao if hasattr(equipamento, 'manutencao') else None
-        )
+        form = EquipamentoUpdateForm(instance=equipamento)
+        manutencao_form = ManutencaoForm(instance=equipamento.manutencao if hasattr(equipamento, 'manutencao') else None)
 
-    dados = {
+    return render(request, 'locadora/editar_equipamento.html', {
         'form': form,
         'manutencao_form': manutencao_form,
         'equipamento': equipamento,
-    }
-    return render(request, 'locadora/editar_equipamento.html', dados)
+    })
+
 
 
 @login_required
@@ -378,29 +359,24 @@ def relatorio_equipamento(request, id):
 
     return render(request, 'locadora/relatorio_equipamento.html', dados)
 
-@require_POST
 @login_required
 def disponibilizar_equipamento(request, id):
     try:
         equipamento = Equipamento.objects.get(id=id)
 
-        if equipamento.em_manutencao and hasattr(equipamento, 'manutencao'):
+        Usuario.objects.filter(equipamento=equipamento).update(equipamento=None)
+
+        if hasattr(equipamento, 'manutencao'):
             equipamento.manutencao.delete()
-            equipamento.em_manutencao = False
-
-        if equipamento.status == 'ALUGADO':
-            equipamento.data_alugado = None
-
-            Usuario.objects.filter(equipamento=equipamento).update(equipamento=None)
 
         equipamento.status = 'DISPONIVEL'
+        equipamento.em_manutencao = False
+        equipamento.data_alugado = None
         equipamento.save()
 
-        messages.success(request, "Equipamento disponibilizado e desvinculado do cliente com sucesso.")
+        messages.success(request, "Equipamento marcado como disponível com sucesso.")
     except Equipamento.DoesNotExist:
         messages.error(request, "Equipamento não encontrado.")
-    
-    return redirect('equipamentos')
 
-
+    return redirect('equipamentos_indisponiveis')
 
