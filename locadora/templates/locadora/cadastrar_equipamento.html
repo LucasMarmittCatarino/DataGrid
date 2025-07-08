@@ -3,29 +3,26 @@
 
 {% block content %}
 
-<div class="container">
+<div class="container my-5">
     <div class="row">
-        <div class="col-8 mx-auto">
-            <h1 class="text-center text-white bg-secondary rounded shadow py-2">Cadastro de Equipamento</h1>
-        </div>
-    </div>
-</div>
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow border-dark">
+                <div class="card-header bg-dark text-white text-center">
+                    <h3 class="mb-0">Cadastro de Equipamento</h3>
+                </div>
+                <div class="card-body bg-light">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form|crispy }}
 
-<div class="container">
-    <div class="row">
-        <div class="col-8 mx-auto">
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{ form|crispy }}
-                
-
-                <button type="submit" class="btn btn-success">Cadastrar Equipamento</button>
-            </form>
+                        <div class="text-center mt-3">
+                            <button type="submit" class="btn btn-dark">Cadastrar Equipamento</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 {% endblock %}
-
-
-

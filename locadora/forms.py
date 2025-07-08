@@ -1,5 +1,6 @@
 from django import forms
 from .models import Equipamento, Usuario, Manutencao
+from django.db import models
 
 
 class EquipamentoForm(forms.ModelForm):

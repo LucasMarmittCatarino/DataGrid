@@ -2,10 +2,12 @@
 
 {% block content %}
 <div class="container my-5">
-    <h2 class="text-center bg-primary text-white py-2 rounded shadow">Relatório de Equipamento Alugado</h2>
+    <!-- Título principal -->
+    <h2 class="text-center bg-warning text-dark py-2 rounded shadow">Relatório de Equipamento Alugado</h2>
 
-    <div class="card shadow mt-4">
-        <div class="card-header bg-dark text-white">
+    <!-- Card do Equipamento -->
+    <div class="card border-warning shadow mt-4">
+        <div class="card-header bg-warning text-dark">
             <h5 class="mb-0">Dados do Equipamento</h5>
         </div>
         <div class="card-body">
@@ -25,9 +27,10 @@
         </div>
     </div>
 
+    <!-- Card do Cliente -->
     {% if cliente %}
-    <div class="card shadow mt-4">
-        <div class="card-header bg-secondary text-white">
+    <div class="card border-warning shadow mt-4">
+        <div class="card-header bg-warning text-dark">
             <h5 class="mb-0">Dados do Cliente</h5>
         </div>
         <div class="card-body">
@@ -40,13 +43,14 @@
         </div>
     </div>
     {% else %}
-        <div class="alert alert-warning mt-4">
+        <div class="alert alert-warning mt-4 shadow">
             Nenhum cliente vinculado a este equipamento.
         </div>
     {% endif %}
 
+    <!-- Botão Voltar -->
     <div class="text-center mt-4">
-        <a href="{% url 'equipamentos_alugados' %}" class="btn btn-outline-secondary">Voltar</a>
+        <a href="{% url 'equipamentos_alugados' %}" class="btn btn-outline-warning">Voltar</a>
     </div>
 </div>
 {% endblock %}

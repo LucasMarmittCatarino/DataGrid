@@ -2,15 +2,20 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container col-6 my-4">
-    <h2 class="text-center mb-4">Cadastro de Admin</h2>
-
-    <form method="post">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <div class="text-center mt-3">
-            <button type="submit" class="btn btn-success">Cadastrar</button>
+<div class="container col-md-6 my-5">
+    <div class="card shadow border-dark">
+        <div class="card-header bg-dark text-white text-center">
+            <h3 class="mb-0">Cadastro de Admin</h3>
         </div>
-    </form>
+        <div class="card-body bg-light">
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-dark">Cadastrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 {% endblock %}

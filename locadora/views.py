@@ -5,7 +5,6 @@ from .forms import EquipamentoForm, UsuarioForm, ManutencaoForm
 from django.views.decorators.http import require_POST
 from django.shortcuts import redirect
 from django.contrib import messages
-from django.db.models import RestrictedError
 from django.utils import timezone
 from django.db import models
 
@@ -378,4 +377,30 @@ def relatorio_equipamento(request, id):
     }
 
     return render(request, 'locadora/relatorio_equipamento.html', dados)
+
+@require_POST
+@login_required
+def disponibilizar_equipamento(request, id):
+    try:
+        equipamento = Equipamento.objects.get(id=id)
+
+        if equipamento.em_manutencao and hasattr(equipamento, 'manutencao'):
+            equipamento.manutencao.delete()
+            equipamento.em_manutencao = False
+
+        if equipamento.status == 'ALUGADO':
+            equipamento.data_alugado = None
+
+            Usuario.objects.filter(equipamento=equipamento).update(equipamento=None)
+
+        equipamento.status = 'DISPONIVEL'
+        equipamento.save()
+
+        messages.success(request, "Equipamento disponibilizado e desvinculado do cliente com sucesso.")
+    except Equipamento.DoesNotExist:
+        messages.error(request, "Equipamento não encontrado.")
+    
+    return redirect('equipamentos')
+
+
 

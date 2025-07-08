@@ -65,8 +65,10 @@
                         <td>{{ equipamento.categoria }}</td>
                         <td>{{ equipamento.fabricante }}</td>
                         <td>
-                            <a href="{% url 'editar_equipamento' equipamento.id %}" class="btn btn-outline-warning btn-sm">Editar</a>
-                            <a href="{% url 'excluir_equipamento' equipamento.id %}" class="btn btn-danger btn-sm">Excluir</a>
+                            <form method="post" action="{% url 'disponibilizar_equipamento' equipamento.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Tem certeza que deseja disponibilizar este equipamento?')">Disponibilizar</button>
+                            </form>
                             <a href="{% url 'relatorio_equipamento' equipamento.id %}" class="btn btn-warning btn-sm">Relatório</a>
                         </td>
                     </tr>
