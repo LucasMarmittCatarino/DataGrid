@@ -3,11 +3,6 @@
 {% block content %}
 <div class="container my-3">
     <div class="card mx-auto" style="width: 18rem;">
-        {% if usuario.foto %}
-            <img src="{{ usuario.foto.thumb.url }}" class="card-img-top" alt="Foto de {{ usuario.nome }}">
-        {% else %}
-            <img src="" class="card-img-top" alt="Sem foto {{ usuario.nome }} ">
-        {% endif %}
         <div class="card-body">
             <h5 class="card-title">{{ usuario.nome }}</h5>
             <p class="card-text"><strong>Telefone:</strong> {{ usuario.telefone }}</p>

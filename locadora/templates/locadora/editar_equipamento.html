@@ -12,7 +12,7 @@
 <div class="container my-3">
     <div class="row">
         <div class="col-8 mx-auto">
-            <form method="post" id="formEquipamento">
+            <form method="post" id="formEquipamento" enctype="multipart/form-data">
                 {% csrf_token %}
 
                 {{ form.as_p }}

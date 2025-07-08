@@ -39,6 +39,12 @@ class Equipamento(models.Model):
     fabricante = models.CharField(max_length=100, blank=True, null=True)
     em_manutencao = models.BooleanField(default=False)
     data_alugado = models.DateField(null=True, blank=True)
+    foto = StdImageField(
+        upload_to='fotos/equipamentos',
+        variations={'thumb': (150, 150), 'medium': (300, 300)},
+        blank=True,
+        null=True
+    )
 
     def __str__(self):
         return self.nome
@@ -76,13 +82,6 @@ class Usuario(models.Model):
     rua = models.CharField(max_length=100, blank=True, null=True)
     numero = models.CharField(max_length=10, blank=True, null=True)
     complemento = models.CharField(max_length=100, blank=True, null=True)
-
-    foto = StdImageField(
-        upload_to='fotos/equipamentos',
-        variations={'thumb': (150, 150), 'medium': (300, 300)},
-        blank=True,
-        null=True
-    )
 
     def __str__(self):
         return self.nome

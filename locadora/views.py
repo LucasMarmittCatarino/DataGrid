@@ -79,7 +79,7 @@ def cadastrar_cliente(request):
 def cadastrar_equipamento(request):
 
     if request.method == 'POST':
-        form = EquipamentoForm(request.POST)
+        form = EquipamentoForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('equipamentos')
@@ -123,7 +123,7 @@ def editar_equipamento(request, id):
         return redirect('equipamentos')
 
     if request.method == 'POST':
-        form = EquipamentoForm(request.POST, instance=equipamento)
+        form = EquipamentoForm(request.POST, request.FILES, instance=equipamento)
         manutencao_form = ManutencaoForm(
             request.POST,
             instance=equipamento.manutencao if hasattr(equipamento, 'manutencao') else None

@@ -14,11 +14,11 @@
 <div class="container">
     <div class="row">
         <div class="col-8 mx-auto">
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form|crispy }}
                 
-                
+
                 <button type="submit" class="btn btn-success">Cadastrar Equipamento</button>
             </form>
         </div>

@@ -19,6 +19,7 @@
             <table class="table table-hover table-success table-striped shadow rounded">
                 <thead>
                     <tr class="table-dark">
+                        <th>Imagem</th>
                         <th>Nome</th>
                         <th>Modelo</th>
                         <th>Número de Série</th>
@@ -32,6 +33,13 @@
                     {% for equipamento in equipamentos %}
                         {% if not equipamento.em_manutencao %}
                         <tr>
+                            <td>
+                                {% if equipamento.foto %}
+                                    <img src="{{ equipamento.foto.url }}" alt="{{ equipamento.nome }}" width="80" height="80" class="img-thumbnail">
+                                {% else %}
+                                    <span class="text-muted">Sem foto</span>
+                                {% endif %}
+                            </td>
                             <td>{{ equipamento.nome }}</td>
                             <td>{{ equipamento.modelo }}</td>
                             <td>{{ equipamento.numero_serie }}</td>

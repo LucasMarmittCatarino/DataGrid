@@ -5,7 +5,7 @@ from .models import Equipamento, Usuario, Manutencao
 class EquipamentoForm(forms.ModelForm):
     class Meta:
         model = Equipamento
-        fields = [ 'nome', 'modelo', 'numero_serie', 'status', 'categoria', 'fabricante', 'em_manutencao', 'data_alugado']
+        fields = [ 'nome', 'modelo', 'numero_serie', 'status', 'categoria', 'fabricante', 'em_manutencao', 'data_alugado', 'foto']
 
 
 class UsuarioForm(forms.ModelForm):
@@ -19,7 +19,7 @@ class UsuarioForm(forms.ModelForm):
         fields = [
             'nome', 'data_nascimento', 'cpf', 'genero', 'estado_civil',
             'escolaridade', 'equipamento', 'telefone',
-            'cidade', 'bairro', 'rua', 'numero', 'complemento', 'foto'
+            'cidade', 'bairro', 'rua', 'numero', 'complemento',
         ]
 
 class ManutencaoForm(forms.ModelForm):
