@@ -7,6 +7,7 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from django.db.models import RestrictedError
 from django.utils import timezone
+from django.db import models
 
 ORDENACAO_USUARIOS_LOOKUP = {
     'equipamento': 'equipamento__nome',
@@ -49,12 +50,33 @@ def usuarios_inativos(request):
 
 @login_required
 def equipamentos(request):
-    equipamentos = Equipamento.objects.filter(em_manutencao=False)
-    equipamentos_em_manutencao = Equipamento.objects.filter(em_manutencao=True)
+    query = request.GET.get('busca', '')
+
+    if query:
+        equipamentos = Equipamento.objects.filter(
+            em_manutencao=False
+        ).filter(
+            models.Q(nome__icontains=query) |
+            models.Q(modelo__icontains=query) |
+            models.Q(numero_serie__icontains=query) |
+            models.Q(categoria__icontains=query) |
+            models.Q(fabricante__icontains=query)
+        )
+        equipamentos_em_manutencao = Equipamento.objects.filter(em_manutencao=True).filter(
+            models.Q(nome__icontains=query) |
+            models.Q(modelo__icontains=query) |
+            models.Q(numero_serie__icontains=query) |
+            models.Q(categoria__icontains=query) |
+            models.Q(fabricante__icontains=query)
+        )
+    else:
+        equipamentos = Equipamento.objects.filter(em_manutencao=False)
+        equipamentos_em_manutencao = Equipamento.objects.filter(em_manutencao=True)
 
     dados = {
         'equipamentos': equipamentos,
         'equipamentos_em_manutencao': equipamentos_em_manutencao,
+        'query': query,
     }
     return render(request, 'locadora/lista_equipamentos.html', dados)
 

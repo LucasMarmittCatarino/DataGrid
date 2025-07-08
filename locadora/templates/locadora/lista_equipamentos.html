@@ -11,7 +11,17 @@
     </div>
 </div>
 
-<!-- Lista de Equipamentos Ativos -->
+<div class="container my-3">
+    <form method="GET" class="form-inline">
+        <div class="input-group">
+            <input type="text" name="busca" class="form-control" placeholder="Buscar por nome, modelo, marca..."
+                   value="{{ query }}">
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="submit">Buscar</button>
+            </div>
+        </div>
+    </form>
+</div>
 <!-- Lista de Equipamentos Ativos -->
 <div class="container my-3"> 
     <div class="row">
